@@ -24,7 +24,7 @@ int countQuickSort(vector<int> &arr, int l, int r)
     total += z;
 
     //int p = r;
-    float m = ceil(((float)r+1-(float)l)/2) -1;
+    float m = l + ceil(((float)r+1-(float)l)/2) -1;
     m = (int)m;
     int p = medianofthree(arr,l,r,m);
 
@@ -60,8 +60,8 @@ void swap(int* a, int* b)
 
 int medianofthree(vector<int> &arr,int l, int r, int m)
 {
-    if((arr[l]<arr[m] && arr[m]<arr[r]) || (arr[r]<arr[m] && arr[m]<arr[l])) return m;
-    else if((arr[m]<arr[l] && arr[l]<arr[r]) || (arr[r]<arr[l] && arr[l]<arr[m])) return l;
+    if((arr[l]<=arr[m] && arr[m]<=arr[r]) || (arr[r]<=arr[m] && arr[m]<=arr[l])) return m;
+    else if((arr[m]<=arr[l] && arr[l]<=arr[r]) || (arr[r]<=arr[l] && arr[l]<=arr[m])) return l;
     else return r;
 }
 
@@ -72,7 +72,7 @@ int main()
     vector<int> arr;
     string num;
     ifstream myReadfile;
-    myReadfile.open("testcase.txt");
+    myReadfile.open("integer.txt");
     if(myReadfile.is_open())
     {
         while (getline(myReadfile, num))
