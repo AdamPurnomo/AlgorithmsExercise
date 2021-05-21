@@ -1,0 +1,7 @@
+The file size is huge resulting in too deep recursion.
+So, to increase the maximum number of recursion, we should increase
+the size of the stack. Can be done by compiling the file as follows,
+
+
+
+g++ -O2 -std=c++11 -Wall -Wl,--stack=268435456 SCC.cpp -o SCC.exe
