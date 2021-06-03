@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 #define MAXV 500
-#define MAXINT 1000000000000
+#define MAXINT 10000000
 
 typedef struct edgenode_t
 {
@@ -21,6 +21,7 @@ typedef struct node_t
     bool processed; //has been processed?
     int degree; //num of adj nodes
     int dist; //distance of this node from source
+    int parent; //the previous node for the shortest path from the source
 } node;
 
 class graph
@@ -47,6 +48,7 @@ public:
             p->processed = false; 
             p->vertex = i+1;
             p->dist = MAXINT;
+            p->parent = 0;
             vertices[i+1] = p;            
         } 
         
@@ -88,8 +90,42 @@ public:
     void dijkstra(int s)
     {
         int v; //current processed node
+        int w; //current processend adjnode
+        edgenode *p; //temporary pointer
+        int dist; //temporary dist variable
         //initialize the distance of the source
         vertices[s]->dist = 0;
+        v = s;
+        
+        //processing unprocessed node
+        while(vertices[v]->processed==false)
+        {
+            vertices[v]->processed = true;
+            p = vertices[v]->adjnode;
+            while(p!=NULL)
+            {
+                w = p->node;
+                //update dist of w if it is less then the current one
+                if(vertices[w]->dist > vertices[v]->dist + p->weight)
+                {
+                    vertices[w]->dist = vertices[v]->dist + p->weight;
+                    vertices[w]->parent = v;
+                }
+                p = p->next;
+            }
+
+            //process the unprocessed node that has minimum distance
+            dist = MAXINT;
+            for(int i=1; i<=nvertexes; i++)
+            {
+                if((vertices[i]->processed == false) && (vertices[i]->dist < dist))
+                {
+                    dist = vertices[i]->dist;
+                    v = i;
+                }
+            }
+
+        }
     }
 };
 
@@ -132,4 +168,15 @@ int main()
             g.nvertexes+=1;
         }
     }
+    g.dijkstra(1);
+    cout << g.vertices[7]->dist<< ',';
+    cout << g.vertices[37]->dist<< ',';
+    cout << g.vertices[59]->dist<< ',';
+    cout << g.vertices[82]->dist<< ',';
+    cout << g.vertices[99]->dist<< ',';
+    cout << g.vertices[115]->dist<< ',';
+    cout << g.vertices[133]->dist<< ',';
+    cout << g.vertices[165]->dist<< ',';
+    cout << g.vertices[188]->dist<< ',';
+    cout << g.vertices[197]->dist<< endl;
 }
