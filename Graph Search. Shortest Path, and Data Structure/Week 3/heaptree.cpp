@@ -9,18 +9,17 @@ typedef struct node_t
     struct node_t *child_r;
     struct node_t *child_l;
     struct node_t *parent;
-    struct node_t *nextorder;
-    struct node_t *prevorder;
+    struct node_t *nextorder; //the subsequence node (in the insert order)
+    struct node_t *prevorder; //the previous node (in the insert order)
 }node;
 
 class heaptree
 {
 public:
-    node *root = (struct node_t*)malloc(sizeof(node));;
-    node *insertplace;
-    node *leafnode;
-    node *semileafnode;
-    int order = 0;
+    node *root = (struct node_t*)malloc(sizeof(node)); 
+    node *insertplace; //node location to insert new node
+    node *leafnode; // the bottom right most node in the tree
+    int size = 1; //size of the tree
     bool min;
 public:
     heaptree(int i, bool min)
@@ -33,14 +32,13 @@ public:
         root->prevorder = NULL;
         insertplace = root;
         leafnode = root;
-        semileafnode = NULL;
         this->min = min;
 
     }
 
     void insert_node(int key)
     {
-        order += 1;
+        size += 1;
         node *p = (struct node_t*)malloc(sizeof(node));
         p->key = key;
         p->nextorder = NULL;
@@ -61,10 +59,10 @@ public:
             insertplace = insertplace->nextorder;
         }
         
+        //updating leafnode 
         leafnode->nextorder = p;
-        semileafnode = leafnode;
+        p->prevorder = leafnode;
         leafnode = p;
-        leafnode->prevorder = semileafnode;
         bubble_up();
     }
     
@@ -77,12 +75,12 @@ public:
 
     void bubble_up()
     {
+        /*bubbling up to maintain invariant during insert operation*/
         node *p = leafnode;
         if(min==true)
         {
             while((p->parent!=NULL) && (p->key < p->parent->key))
             {
-                //cout << p->key << p->parent->key << endl;
                 swapkey(p, p->parent);
                 p = p->parent;
             }
@@ -99,8 +97,10 @@ public:
 
     void bubble_down()
     {
+        /*bubbling down to maintain invariant during exract operation*/
         node *p = root;
         node *chosenchild = minmax_key(root->child_l, root->child_r);
+        
 
         if(min==true)
         {
@@ -108,7 +108,9 @@ public:
             {
                 swapkey(p, chosenchild);
                 p = chosenchild;
-                chosenchild = minmax_key(chosenchild->child_l, chosenchild->child_r);
+                if((p->child_l != NULL) && (p->child_r != NULL)) chosenchild = minmax_key(chosenchild->child_l, chosenchild->child_r);
+                else if(p->child_l != NULL) chosenchild = p->child_l;
+                else chosenchild = NULL;
             }
         }
         else if(min==false)
@@ -142,15 +144,16 @@ public:
     {
         int res = root->key;
         swapkey(root, leafnode);
-
+        size -= 1;
+        
         //deleting the current leaf
         if(leafnode->parent->child_l == leafnode) leafnode->parent->child_l == NULL;
         else if(leafnode->parent->child_r == leafnode) leafnode->parent->child_r = NULL;
 
-        //shift leafnode and semileafnode
+        //shift leafnode
         leafnode = leafnode->prevorder;
         leafnode->nextorder = NULL;
-        semileafnode = semileafnode->prevorder;
+
         bubble_down();
         return res;
     }
@@ -171,7 +174,7 @@ public:
 
 int main()
 {
-    heaptree H(9, false);
+    heaptree H(9, true);
     H.insert_node(1);
     H.insert_node(2);
     H.insert_node(3);
