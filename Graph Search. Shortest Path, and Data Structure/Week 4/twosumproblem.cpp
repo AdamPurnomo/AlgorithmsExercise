@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <bits/stdc++.h>
 using namespace std;
 #define MAXINT 2000000
 
@@ -39,6 +40,12 @@ public:
             if (index > MAXINT) cout << data[i] << " " << index << endl;
             tables[index].push_back(data[i]);
         }        
+    }
+
+    void insert_from_key(long long int key)
+    {
+        int index = hashingfunction(key);
+        tables[index].push_back(key);
     }
 
     bool lookup(long long int key)
@@ -91,6 +98,7 @@ int main()
     ifstream file;
     string line;
     table T;
+    vector<long long int> A;
     file.open("data.txt");
     cout << "Reading data . . ." << endl;
 
@@ -98,18 +106,71 @@ int main()
     {
         while(getline(file, line))
         {
-            T.data.push_back(strtoll(line.c_str(), nullptr, 10));
+            A.push_back(strtoll(line.c_str(), nullptr, 10));
         }
     }
 
-    //insertind data to hash tables
+
+
+    sort(A.begin(), A.end());
+
+
+    //still slow actually, around one minute
+    //how can we get it down to few seconds?
+    
+    int i=0;
+    int j=A.size()-1;
+    long long int max = 10000;
+    long long int min = -10000;
+    long long int sum = A[i] + A[j];
+    int num = 0;
+
+   
+
+    while(i<j)
+    {   
+        if(sum < min) 
+        {
+            i++;
+            sum = A[i] + A[j];
+        }
+        else if(sum > max) 
+        {
+            j--;
+            sum = A[i] + A[j];
+        }
+        else
+        {
+            while((sum >= min) && (i<j))
+            {
+                
+                if(T.lookup(sum)==false)
+                {
+                    T.insert_from_key(sum);
+                    num +=1;
+                }
+                j--;
+                sum = A[i] + A[j];
+            }
+            i++;
+            j=A.size()-1;
+            sum = A[i] + A[j];
+        }
+        
+    }
+
+
+    cout << num << endl;
+    
+    /*
+    too slow for many targets (more than 1 hour)
+    
+    /insert data to hash tables
     T.insert(); 
 
-    //sanity check
-    //T.printhashtables();
-
-    int res = T.twosumprob(-10000, 10000);
+    //int res = T.twosumprob(min, max);
     cout << res << endl;
+    */
 
     return 0;
 }
