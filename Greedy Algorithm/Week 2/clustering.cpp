@@ -106,27 +106,6 @@ setunion clustering(edgearray *e, vector<int> &argsort)
     return s;
 }
 
-int maxspace4cluster(edgearray *e, setunion *s, vector<int> &argsort)
-{
-    int v,w;
-
-
-    //should be using hash table
-    for(int i=1; i<s->elementsize; i++)
-    {
-
-    }
-
-    for (int k=0; k<e->edges.size(); k++)
-    {
-        int index = argsort[k];
-        v = e->pairnodes[index].first;
-        w = e->pairnodes[index].second;
-        int rv = s->find_root(v);
-        int rw = s->find_root(w);
-    }
-    return 0;
-}
 
 int main()
 {
