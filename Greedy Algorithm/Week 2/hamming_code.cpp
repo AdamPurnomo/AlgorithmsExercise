@@ -6,6 +6,7 @@
 #include <numeric>
 #include <algorithm>
 #include <cmath>
+#include <unordered_map>
 
 #include <cstdlib>
 using namespace std;
@@ -125,6 +126,47 @@ int BinarytoDecimal(string n)
     return decimal;
 }
 
+void twocombi(int n, vector<vector<int>> &combi)
+{
+   
+    for(int i=0; i<n; i++)
+    {
+        for (int j=i+1; j<n; j++)
+        {
+             vector<int> temp;
+             temp.push_back(i);
+             temp.push_back(j);
+             combi.push_back(temp);
+        }
+    }
+}
+
+
+
+/*
+##Will be donw later
+void combine_util(int n, int st, int r)
+{
+    if(r==0) return;
+    for(int i=st; i<=n; i++)
+    {
+        cout << st-1 << " " << i << " ";
+        combine_util(n, st+1, r-1);
+        cout << endl;
+    }
+}
+
+void combination(int n, int r)
+{
+    ##Generate a r combination of integer natural number up to n 
+    
+    for(int i=1; i<=n; i++)
+    {
+        combine_util(n,i+1,r-1);
+    }
+}
+*/
+
 int main()
 {
     ifstream file;
@@ -132,6 +174,7 @@ int main()
     int num_nodes, bitlength;
     vector<string> binary;
     vector<int> decimal;
+    unordered_map<string, int> bmap;
 
     file.open("hamming.txt");
     if(file.is_open())
@@ -147,6 +190,7 @@ int main()
                 string temp;
                 while((linestream >> data)) temp.append(data);
                 binary.push_back(temp);
+                bmap[temp] = 1;
             }
             i++; 
         }
@@ -157,6 +201,54 @@ int main()
         int dec = BinarytoDecimal(binary[i]);
         decimal.push_back(dec);
     }
+
+    /*Create combination of 1 and 2 number*/
+    vector<int> oneid(24);
+    iota(oneid.begin(), oneid.end(), 0);
+    vector<vector<int>> twoid;
+    twocombi(bitlength,twoid);
+
+    /*Generate combination*/
+    for (int i = 0; i<1; i++)
+    {
+        //check one id
+        for (int j=0; j<oneid.size() ; j++)
+        {
+            //replace with one different value
+            string temp = binary[i];
+            int idx = oneid[j];
+            char c =  (binary[i][idx] - '0')^1 + '0' ;
+            temp[idx] = c;
+
+            //find the temp in the hashmap
+            if(bmap.find(temp) != bmap.end())
+            {
+                /*merge binary i with temp*/
+            }
+        }
+
+        //check two id
+        for (int j=0; j<twoid.size(); j++)
+        {
+            //replace with two different values
+            string temp = binary[i];
+            int idx1 = twoid[j][0];
+            int idx2 = twoid[j][1];
+            char c =  (binary[i][idx1] - '0')^1 + '0' ;
+            char d = (binary[i][idx2] - '0')^1 + '0';
+            temp[idx1] = c;
+            temp[idx2] = d;
+
+            //find the temp in the hashmap
+            if(bmap.find(temp) != bmap.end())
+            {
+                /*merge binary i with temp*/
+            }
+
+        }
+        
+    }
     
-    
+
+          
 }
