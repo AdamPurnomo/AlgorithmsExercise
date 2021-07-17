@@ -22,12 +22,12 @@ public:
 public:
 void init(int V)
 {
-    elementsize = V+1;
-    n = V+1;
-    p = new int[V+1];
-    size = new int[V+1];
+    elementsize = V;
+    n = V;
+    p = new int[V];
+    size = new int[V];
 
-    for (int i=0; i<=V+1; i++)
+    for (int i=0; i<=V; i++)
     {
         p[i] = i;
         size[i] = 1;
@@ -174,8 +174,9 @@ int main()
     int num_nodes, bitlength;
     vector<string> binary;
     vector<int> decimal;
-    unordered_map<string, int> bmap;
+    unordered_map<string, vector<int>> bmap;
 
+    //Reading file and store it to binary, decimal and bmap
     file.open("hamming.txt");
     if(file.is_open())
     {
@@ -190,7 +191,21 @@ int main()
                 string temp;
                 while((linestream >> data)) temp.append(data);
                 binary.push_back(temp);
-                bmap[temp] = 1;
+
+                /*
+                ##check if there is a repeating
+                if(bmap.find(temp) != bmap.end())
+                {
+                    cout << temp << " available at ";
+                    for (int m = 0; m < bmap[temp].size(); m++)
+                    {
+                        cout << bmap[temp][m] << " ";
+                    }
+                    cout << i-1 << endl; 
+                }
+                */
+
+                bmap[temp].push_back(i-1);
             }
             i++; 
         }
@@ -202,6 +217,10 @@ int main()
         decimal.push_back(dec);
     }
 
+    //initializing setunion
+    setunion s;
+    s.init(decimal.size());
+
     /*Create combination of 1 and 2 number*/
     vector<int> oneid(24);
     iota(oneid.begin(), oneid.end(), 0);
@@ -209,9 +228,17 @@ int main()
     twocombi(bitlength,twoid);
 
     /*Generate combination*/
-    for (int i = 0; i<1; i++)
+    for (int i = 0; i<binary.size(); i++)
     {
-        //check one id
+        //check zero dist
+        string temp = binary[i];
+        for(int k=0; k<bmap[temp].size();k++)
+        {
+            int idx = bmap[temp][k];
+            if(s.same_component(i,idx)==false) s.merge_union(i,idx);
+        }
+        
+        //check one dist
         for (int j=0; j<oneid.size() ; j++)
         {
             //replace with one different value
@@ -223,11 +250,17 @@ int main()
             //find the temp in the hashmap
             if(bmap.find(temp) != bmap.end())
             {
-                /*merge binary i with temp*/
+                //if it is found, merge the union
+                for (int k = 0; k < bmap[temp].size(); k++)
+                {
+                    int idx = bmap[temp][k];
+                    if(s.same_component(i,idx)==false) s.merge_union(i,idx);
+                }
+                
             }
         }
 
-        //check two id
+        //check two dist
         for (int j=0; j<twoid.size(); j++)
         {
             //replace with two different values
@@ -242,12 +275,36 @@ int main()
             //find the temp in the hashmap
             if(bmap.find(temp) != bmap.end())
             {
-                /*merge binary i with temp*/
+                //if it is found, merge the union
+                for (int k = 0; k < bmap[temp].size(); k++)
+                {
+                    int idx = bmap[temp][k];
+                    if(s.same_component(i,idx)==false) s.merge_union(i,idx);
+                }
             }
 
+        }        
+    }
+
+    cout << s.n << endl;
+
+    // Fucking working!!
+
+    /*
+    ##Debugging for making sure that data is not unique
+
+    for (int i = 0; i < binary.size(); i++)
+    {
+        cout << binary[i] << " idx : ";
+        for (int j = 0; j < bmap[binary[i]].size(); j++)
+        {
+            cout << bmap[binary[i]][j] << " ";
         }
+        cout << endl;
         
     }
+    */
+    
     
 
           
