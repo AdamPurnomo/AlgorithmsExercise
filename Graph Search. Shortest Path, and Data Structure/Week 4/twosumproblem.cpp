@@ -120,8 +120,8 @@ int main()
     
     int i=0;
     int j=A.size()-1;
-    long long int max = 10000;
-    long long int min = -10000;
+    int max = 10000;
+    int min = -10000;
     long long int sum = A[i] + A[j];
     int num = 0;
 
