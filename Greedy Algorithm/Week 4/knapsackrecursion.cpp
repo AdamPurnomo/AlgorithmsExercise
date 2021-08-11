@@ -16,8 +16,6 @@ long long int knapsack(int i, int c, vector <pair<int, int>>& data, unordered_ma
     string currentkey = to_string(i) + "," + to_string(c);
     string lookupkey1 = to_string(i-1) + "," + to_string(c);
     string lookupkey2 = to_string(i-1) + "," + to_string(c - data[i-1].second);
-
-    //cout << currentkey << " " << lookupkey1 << " " << lookupkey2 << endl;
     
     if (i==0 || c==0) 
     {
